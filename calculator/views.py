@@ -4,8 +4,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.shortcuts import render
 from .models import User
+from django import forms
+from django.contrib.auth.decorators import login_required
+import decimal
 
-# Create your views here.
+class InputScoreForm(forms.Form):
+    course = forms.CharField(label='Course')
+    date = forms.DateField(label='Date')
+    score = forms.IntegerField(label='Adjusted Score')
+    rating = forms.FloatField(label='Course Rating')
+    slope = forms.IntegerField(label='Slope')
 
 def index(request):
     # return HttpResponse("Handicap Calculator in Progress")
@@ -52,4 +60,22 @@ def register(request):
     else:
         return render(request, 'register.html')
 
-# Form class for scores
+@login_required
+def add_score(request):
+    if request.method == 'POST':
+        form = InputScoreForm(request.POST)
+        if form.is_valid():
+            #calculate differential
+            score = form.cleaned_data['score']
+            rating = form.cleaned_data['rating']
+            slope = form.cleaned_data['slope']
+            # Set so rounds to nearest tenth with 0.5 rounding up
+            ctx = decimal.getcontext()
+            ctx.rounding = decimal.ROUND_HALF_UP
+            differential = round(decimal.Decimal((113/slope) * (score - rating)),1)
+            print(differential)
+            return HttpResponseRedirect(reverse("index"))
+        else:
+            #re-render form
+            pass
+    return render(request, "add.html", {"form": InputScoreForm()})

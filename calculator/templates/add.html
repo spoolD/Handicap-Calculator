@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+<h1>Add New Score</h1>
+<form action="{% url 'add' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit">
+</form>
+
+{% endblock %}

@@ -2,5 +2,8 @@
 {% load static %}
 
 {% block body %}
-HOME
+{% if user.is_authenticated %}
+    <p>Basic handicap information</p>
+    <button><a href="/add">Add Score</a></button>
+{% endif %}
 {% endblock %}
