@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 import decimal
 
 class InputScoreForm(forms.Form):
+    holes = forms.ChoiceField(label= '# of Holes', choices = [(18 , 18), (9, 9)])
     course = forms.CharField(label='Course')
     date = forms.DateField(label='Date')
     score = forms.IntegerField(label='Adjusted Score')
@@ -66,6 +67,7 @@ def add_score(request):
         form = InputScoreForm(request.POST)
         if form.is_valid():
             #calculate differential
+            holes = form.cleaned_date['holes']
             score = form.cleaned_data['score']
             rating = form.cleaned_data['rating']
             slope = form.cleaned_data['slope']
@@ -73,7 +75,7 @@ def add_score(request):
             ctx = decimal.getcontext()
             ctx.rounding = decimal.ROUND_HALF_UP
             differential = round(decimal.Decimal((113/slope) * (score - rating)),1)
-            print(differential)
+            
             return HttpResponseRedirect(reverse("index"))
         else:
             #re-render form

@@ -8,6 +8,7 @@ class User(AbstractUser):
 
 class Score(models.Model):
     golfer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posted_by')
+    holes = models.IntegerField(choices = [(9,9),(18,18)])
     course = models.CharField(max_length=64)
     date = models.DateField()
     score = models.IntegerField()
