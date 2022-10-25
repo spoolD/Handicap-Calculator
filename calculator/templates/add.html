@@ -3,6 +3,9 @@
 
 {% block body %}
 <h1>Add New Score</h1>
+{% if error %}
+    {{error}}
+{% endif %}
 <form action="{% url 'add' %}" method="post">
     {% csrf_token %}
     {{ form }}

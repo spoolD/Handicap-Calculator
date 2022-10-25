@@ -3,10 +3,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.shortcuts import render
-from .models import User
+from .models import User, Score
 from django import forms
 from django.contrib.auth.decorators import login_required
 import decimal
+
+
 
 class InputScoreForm(forms.Form):
     holes = forms.ChoiceField(label= '# of Holes', choices = [(18 , 18), (9, 9)])
@@ -67,7 +69,6 @@ def add_score(request):
         form = InputScoreForm(request.POST)
         if form.is_valid():
             #calculate differential
-            holes = form.cleaned_date['holes']
             score = form.cleaned_data['score']
             rating = form.cleaned_data['rating']
             slope = form.cleaned_data['slope']
@@ -76,8 +77,20 @@ def add_score(request):
             ctx.rounding = decimal.ROUND_HALF_UP
             differential = round(decimal.Decimal((113/slope) * (score - rating)),1)
             
+            #Add score to database
+            new_score = Score(
+                    golfer = request.user,
+                    holes = form.cleaned_data['holes'],
+                    course = form.cleaned_data['course'],
+                    date = form.cleaned_data['date'],
+                    score = form.cleaned_data['score'],
+                    rating = form.cleaned_data['rating'],
+                    slope = form.cleaned_data['slope'],
+                    differential = differential
+            )
+            new_score.save()
+
             return HttpResponseRedirect(reverse("index"))
         else:
-            #re-render form
-            pass
+            return render(request, "add.html", {"form": InputScoreForm(), "error":'Invalid Submission'})
     return render(request, "add.html", {"form": InputScoreForm()})
