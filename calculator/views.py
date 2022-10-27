@@ -7,6 +7,7 @@ from .models import User, Score
 from django import forms
 from django.contrib.auth.decorators import login_required
 import decimal
+from django.db.models import Min
 
 
 
@@ -88,9 +89,37 @@ def add_score(request):
                     slope = form.cleaned_data['slope'],
                     differential = differential
             )
-            new_score.save()
+            #new_score.save()
+
+            #Update handicap 
+            updated_handicap = calculate_handicap(request.user)
 
             return HttpResponseRedirect(reverse("index"))
         else:
             return render(request, "add.html", {"form": InputScoreForm(), "error":'Invalid Submission'})
     return render(request, "add.html", {"form": InputScoreForm()})
+
+
+def calculate_handicap(user):
+    #Calculation Guide from USGA
+    #https://www.usga.org/content/usga/home-page/handicapping/roh/Content/rules/5%202%20Calculation%20of%20a%20Handicap%20Index.htm
+    
+    # get user's 18 hole scores sorted by date
+    scores = Score.objects.filter(golfer=user, holes=18).order_by('-date')
+    
+    # Not enough scores for Handicap
+    if scores.count() in [0,1,2]:
+        return None
+
+    # Calculation dependent on number of scores up to 20 rounds
+    elif scores.count() == 3:
+        # Lowest 1 score -2 differential
+        return((scores.aggregate(Min('differential'))['differential__min']) - 2)
+    elif scores.count() == 4:
+        # Lowest 1 score -1 differential
+        return((scores.aggregate(Min('differential'))['differential__min']) - 1)
+    elif scores.count() == 5:
+        # Lowest 1 score
+        return((scores.aggregate(Min('differential'))['differential__min']))
+    elif scores.count() == 6:
+        pass
