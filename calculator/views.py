@@ -7,7 +7,7 @@ from .models import User, Score
 from django import forms
 from django.contrib.auth.decorators import login_required
 import decimal
-from django.db.models import Min
+from django.db.models import Min, Avg
 
 
 
@@ -89,7 +89,9 @@ def add_score(request):
                     slope = form.cleaned_data['slope'],
                     differential = differential
             )
-            #new_score.save()
+            #Add logic for if score is a 9 hole score
+
+            new_score.save()
 
             #Update handicap 
             updated_handicap = calculate_handicap(request.user)
@@ -101,6 +103,8 @@ def add_score(request):
 
 
 def calculate_handicap(user):
+    ctx = decimal.getcontext()
+    ctx.rounding = decimal.ROUND_HALF_UP
     #Calculation Guide from USGA
     #https://www.usga.org/content/usga/home-page/handicapping/roh/Content/rules/5%202%20Calculation%20of%20a%20Handicap%20Index.htm
     
@@ -113,13 +117,38 @@ def calculate_handicap(user):
 
     # Calculation dependent on number of scores up to 20 rounds
     elif scores.count() == 3:
-        # Lowest 1 score -2 differential
-        return((scores.aggregate(Min('differential'))['differential__min']) - 2)
+        # Lowest 1 differential -2 differential
+        return (scores.aggregate(Min('differential'))['differential__min']) - 2
     elif scores.count() == 4:
-        # Lowest 1 score -1 differential
-        return((scores.aggregate(Min('differential'))['differential__min']) - 1)
+        # Lowest 1 differential -1 differential
+        return (scores.aggregate(Min('differential'))['differential__min']) - 1
     elif scores.count() == 5:
-        # Lowest 1 score
-        return((scores.aggregate(Min('differential'))['differential__min']))
+        # Lowest 1 differential
+        return scores.aggregate(Min('differential'))['differential__min']
     elif scores.count() == 6:
-        pass
+        #Average of lowest 2 differential -1 differential
+        print(round((scores.order_by('differential')[:2].aggregate(Avg('differential'))['differential__avg']) - 1, 1))
+    elif scores.count() == 7 or scores.count() == 8:
+        #Average of lowest 2 differential
+        return round(scores.order_by('differential')[:2].aggregate(Avg('differential'))['differential__avg'], 1)
+    elif scores.count() == 9 or scores.count() == 10 or scores.count() == 11:
+        #Average of lowest 3 differential
+        return round(scores.order_by('differential')[:3].aggregate(Avg('differential'))['differential__avg'], 1)
+    elif scores.count() == 12 or scores.count() == 13 or scores.count() == 14:
+        # Average of lowest 4 differential
+        return round(scores.order_by('differential')[:4].aggregate(Avg('differential'))['differential__avg'], 1)
+    elif scores.count() == 15 or scores.count() == 16:
+        # Average of lowest 5 differential
+        return round(scores.order_by('differential')[:5].aggregate(Avg('differential'))['differential__avg'], 1)
+    elif scores.count() == 17 or scores.count() == 18:
+         # Average of lowest 6 differential
+        return round(scores.order_by('differential')[:6].aggregate(Avg('differential'))['differential__avg'], 1)
+    elif scores.count() == 19:
+         # Average of lowest 7 differential
+        return round(scores.order_by('differential')[:7].aggregate(Avg('differential'))['differential__avg'], 1)
+    elif scores.count() == 20:
+         # Average of lowest 8 differential
+        return round(scores.order_by('differential')[:8].aggregate(Avg('differential'))['differential__avg'], 1)
+    else:
+        # Average of lowest 8 for 20 most recent rounds
+        return round(scores[:20].order_by('differential')[:8].aggregate(Avg('differential'))['differntial__avg'], 1)
