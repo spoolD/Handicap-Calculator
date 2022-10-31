@@ -78,23 +78,47 @@ def add_score(request):
             ctx.rounding = decimal.ROUND_HALF_UP
             differential = round(decimal.Decimal((113/slope) * (score - rating)),1)
             
-            #Add score to database
-            new_score = Score(
-                    golfer = request.user,
-                    holes = form.cleaned_data['holes'],
-                    course = form.cleaned_data['course'],
-                    date = form.cleaned_data['date'],
-                    score = form.cleaned_data['score'],
-                    rating = form.cleaned_data['rating'],
-                    slope = form.cleaned_data['slope'],
-                    differential = differential
-            )
-            #Add logic for if score is a 9 hole score
+            # Logic for if score is a 9 hole score
+            holes = form.cleaned_data['holes']
+            
+            try:
+                score_nine = Score.objects.get(golfer=request.user, holes=9)
+            except:
+                score_nine = None
 
-            new_score.save()
+            if holes == '9' and score_nine:
+                print('here')  
+                score_nine.holes = '18'
+                score_nine.date_comb = form.cleaned_data['date']
+                score_nine.score_comb = form.cleaned_data['score']
+                score_nine.rating_comb = form.cleaned_data['rating']
+                score_nine.slope_comb = form.cleaned_data['slope']
+                score_nine.differential_first = differential
+                score_nine.differential = decimal.Decimal(score_nine.differential) + differential
+                score_nine.differential_second = differential
+                score_nine.course_comb = form.cleaned_data['course']
+                score_nine.date_comb = form.cleaned_data['date']
+
+                score_nine.save()
+            else:
+                #Add score to database
+                new_score = Score(
+                        golfer = request.user,
+                        holes = holes,
+                        course = form.cleaned_data['course'],
+                        date = form.cleaned_data['date'],
+                        score = form.cleaned_data['score'],
+                        rating = form.cleaned_data['rating'],
+                        slope = form.cleaned_data['slope'],
+                        differential = differential
+                )
+                new_score.save()
 
             #Update handicap 
+            user = User.objects.get(username = request.user)
             updated_handicap = calculate_handicap(request.user)
+            user.handicap = updated_handicap
+            user.save()
 
             return HttpResponseRedirect(reverse("index"))
         else:
@@ -109,7 +133,7 @@ def calculate_handicap(user):
     #https://www.usga.org/content/usga/home-page/handicapping/roh/Content/rules/5%202%20Calculation%20of%20a%20Handicap%20Index.htm
     
     # get user's 18 hole scores sorted by date
-    scores = Score.objects.filter(golfer=user, holes=18).order_by('-date')
+    scores = Score.objects.filter(golfer=user, holes='18').order_by('-date')
     
     # Not enough scores for Handicap
     if scores.count() in [0,1,2]:
@@ -127,7 +151,7 @@ def calculate_handicap(user):
         return scores.aggregate(Min('differential'))['differential__min']
     elif scores.count() == 6:
         #Average of lowest 2 differential -1 differential
-        print(round((scores.order_by('differential')[:2].aggregate(Avg('differential'))['differential__avg']) - 1, 1))
+        return round((scores.order_by('differential')[:2].aggregate(Avg('differential'))['differential__avg']) - 1, 1)
     elif scores.count() == 7 or scores.count() == 8:
         #Average of lowest 2 differential
         return round(scores.order_by('differential')[:2].aggregate(Avg('differential'))['differential__avg'], 1)
