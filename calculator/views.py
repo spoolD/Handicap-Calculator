@@ -20,8 +20,18 @@ class InputScoreForm(forms.Form):
     slope = forms.IntegerField(label='Slope')
 
 def index(request):
-    # return HttpResponse("Handicap Calculator in Progress")
-    return render(request, 'index.html')
+    if request.user.is_authenticated:
+        #get user
+        user = User.objects.get(username = request.user)
+        
+        #get 20 most recent rounds and information
+        scores = Score.objects.filter(golfer=user, holes='18').order_by('-date')
+        
+        return render(request, 'index.html', {"scores": scores})
+    else:
+        return render(request, 'index.html')
+        
+   
 
 def login_view(request):
     if request.method == 'POST':
@@ -33,10 +43,10 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse('index'))
         else:
-            return render(request, 'login.html', {"message": 'Invalid login credentials'})
+            return render(request, 'index.html', {"message": 'Invalid login credentials'})
 
     else:
-        return render(request, 'login.html')
+        return render(request, 'index.html')
 
 
 def logout_view(request):

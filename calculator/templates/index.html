@@ -3,7 +3,32 @@
 
 {% block body %}
 {% if user.is_authenticated %}
-    <p>Basic handicap information</p>
+    <div>{{user}} : {{user.handicap}}</div>
+    {% for score in scores %}
+       <div>
+        {{score.differential}}
+        {{score.course}}
+       </div> 
+    {% endfor %}
     <button><a href="/add">Add Score</a></button>
+{% else %}
+    <h2>Login</h2>
+
+    {% if message %}
+        <div class="'alert alert-danger">{{message}}</div>
+    {% endif %}
+
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="Password">
+        </div>
+        <input class="btn btn-primary" type="submit" value="Login">
+    </form>
+
+
 {% endif %}
 {% endblock %}
