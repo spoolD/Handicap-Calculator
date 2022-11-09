@@ -6,6 +6,13 @@ class User(AbstractUser):
     handicap = models.FloatField(blank=True, null=True)
     def __str__(self):
         return self.username
+        
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "handicap": self.handicap
+        }
 
 class Score(models.Model):
     golfer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posted_by')

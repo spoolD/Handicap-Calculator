@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.shortcuts import render
@@ -25,10 +25,8 @@ def index(request):
         user = User.objects.get(username = request.user)
         
         #get 20 most recent rounds and information
-        scores = Score.objects.filter(golfer=user, holes='18').order_by('-date')
-        if len(scores) > 20:
-            scores = scores[:20]
-
+        scores = Score.objects.filter(golfer=user, holes='18').order_by('-date')[:20]
+       
         return render(request, 'index.html', {"scores": scores})
     else:
         return render(request, 'index.html')
@@ -137,6 +135,17 @@ def add_score(request):
             return render(request, "add.html", {"form": InputScoreForm(), "error":'Invalid Submission'})
     return render(request, "add.html", {"form": InputScoreForm()})
 
+def lookup(request):
+    return render(request, 'lookup.html')
+
+def search(request, term):
+    #Removes placeholder '+'
+    search_term = term[1:]
+    if search_term == '':
+        golfers = []
+    else:
+        golfers = User.objects.filter(username__icontains=search_term)
+    return JsonResponse([golfer.serialize() for golfer in golfers], safe = False)
 
 def calculate_handicap(user):
     ctx = decimal.getcontext()
