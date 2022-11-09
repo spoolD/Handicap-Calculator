@@ -26,7 +26,9 @@ def index(request):
         
         #get 20 most recent rounds and information
         scores = Score.objects.filter(golfer=user, holes='18').order_by('-date')
-        
+        if len(scores) > 20:
+            scores = scores[:20]
+
         return render(request, 'index.html', {"scores": scores})
     else:
         return render(request, 'index.html')
