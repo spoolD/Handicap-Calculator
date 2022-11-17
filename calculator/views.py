@@ -8,6 +8,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 import decimal
 from django.db.models import Min, Avg
+import json
 
 
 
@@ -146,6 +147,23 @@ def search(request, term):
     else:
         golfers = User.objects.filter(username__icontains=search_term)
     return JsonResponse([golfer.serialize() for golfer in golfers], safe = False)
+
+@login_required
+def follow(request):
+    # Get data from JSON request
+    data = json.loads(request.body)
+    current_user = User.objects.get(username=request.user)
+    action = data.get("type", "")
+    person = User.objects.get(username = data.get("person", ""))
+    
+    # Update database with request
+    if action == 'Follow':
+        current_user.following.add(person)
+        return JsonResponse({"message": "Followed successfully."}, status=201)
+    else:
+        current_user.following.remove(person)
+        return JsonResponse({"message": "Unfollowed successfully."}, status=201)
+
 
 def calculate_handicap(user):
     ctx = decimal.getcontext()

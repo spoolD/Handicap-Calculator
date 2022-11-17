@@ -33,6 +33,15 @@ function add_golfer(golfer){
     handicap.innerText = golfer.handicap;
     container.append(handicap);
 
+    const button = document.createElement('button');
+    // make fetch request to database for golfers being followed
+
+    // if followed make button say 'unfollow'
+
+    // else make button say 'follow'
+
+    // add follow/unfollow logic to both from follow.js
+
     document.querySelector('#results').append(container);
 }
 
