@@ -4,6 +4,13 @@
 {% block body %}
 {% if user.is_authenticated %}
     <div>{{user}} : {{user.handicap}}</div>
+    {% if nine_score %}
+    <div>===Awaiting Score to combine=== </div>
+    <div>
+        {{nine_score.differential}}
+        {{nine_score.course}}
+    </div>
+    {% endif %}
     {% for score in scores %}
        <div>
         {{score.differential}}
