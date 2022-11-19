@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 import decimal
 from django.db.models import Min, Avg
 import json
-
+from django.views.decorators.csrf import csrf_exempt
 
 
 class InputScoreForm(forms.Form):
@@ -32,7 +32,28 @@ def index(request):
     else:
         return render(request, 'index.html')
         
-   
+def golfer_home(request, golfer):
+    #get 20 most recent rounds and information
+    golfer_obj = User.objects.get(username=golfer)
+    scores = Score.objects.filter(golfer=golfer_obj, holes='18').order_by('-date')[:20]
+    
+    if request.user == golfer_obj.username:
+        follow_button = False
+    else:
+        follow_button = True
+
+    user = User.objects.get(username=request.user)
+    try:
+        check_follow = user.following.get(username=golfer)
+    except:
+        check_follow = None
+        
+    if check_follow:
+        button_text = 'Unfollow'
+    else:
+        button_text = 'Follow'
+    
+    return render(request, 'golfer.html', {"scores": scores, "golfer": golfer_obj, "follow_button": follow_button, "button_text": button_text})
 
 def login_view(request):
     if request.method == 'POST':
@@ -137,7 +158,11 @@ def add_score(request):
     return render(request, "add.html", {"form": InputScoreForm()})
 
 def lookup(request):
-    return render(request, 'lookup.html')
+
+    user = User.objects.get(username=request.user)
+    following = user.following.all()
+
+    return render(request, 'lookup.html',{"following":following})
 
 def search(request, term):
     #Removes placeholder '+'
@@ -148,20 +173,21 @@ def search(request, term):
         golfers = User.objects.filter(username__icontains=search_term)
     return JsonResponse([golfer.serialize() for golfer in golfers], safe = False)
 
+@csrf_exempt
 @login_required
 def follow(request):
     # Get data from JSON request
     data = json.loads(request.body)
     current_user = User.objects.get(username=request.user)
     action = data.get("type", "")
-    person = User.objects.get(username = data.get("person", ""))
+    golfer = User.objects.get(username = data.get("golfer", ""))
     
     # Update database with request
     if action == 'Follow':
-        current_user.following.add(person)
+        current_user.following.add(golfer)
         return JsonResponse({"message": "Followed successfully."}, status=201)
     else:
-        current_user.following.remove(person)
+        current_user.following.remove(golfer)
         return JsonResponse({"message": "Unfollowed successfully."}, status=201)
 
 

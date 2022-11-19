@@ -3,10 +3,16 @@
 
 {% block script %}
     <script src="{% static 'search.js' %}" defer></script>
-    <script src="{% static 'follow.js' %}" defer></script>
 {% endblock %}
 
 {% block body %}
+<div>
+    <h1>My Followed Golfers</h1>
+    {% for golfer in following %}
+        <div>{{golfer}}: {{golfer.handicap}}</div>
+    {% endfor %}
+</div>
+
 <div>
     <input id="golfer-search" type="text" placeholder="Golfer Name">
 </div>

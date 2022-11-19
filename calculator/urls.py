@@ -9,5 +9,6 @@ urlpatterns = [
     path('add', views.add_score, name='add'),
     path('lookup', views.lookup, name='lookup'),
     path('search/<str:term>', views.search, name="search"),
+    path('find/<str:golfer>', views.golfer_home, name='find'),
     path('follow', views.follow, name='follow')
 ]

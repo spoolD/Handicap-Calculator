@@ -25,22 +25,18 @@ golferSearch.addEventListener('input', (event) => {
 function add_golfer(golfer){
     const container = document.createElement('div');
 
-    const user = document.createElement('div');
-    user.innerText = golfer.username;
-    container.append(user);
+    const user_container = document.createElement('div');
+    const user = document.createElement('a')
+    user.textContent = golfer.username;
+    user.href = 'find/' + golfer.username
+    user_container.append(user)
+    container.append(user_container);
 
     const handicap = document.createElement('div');
     handicap.innerText = golfer.handicap;
     container.append(handicap);
 
-    const button = document.createElement('button');
-    // make fetch request to database for golfers being followed
-
-    // if followed make button say 'unfollow'
-
-    // else make button say 'follow'
-
-    // add follow/unfollow logic to both from follow.js
+    
 
     document.querySelector('#results').append(container);
 }

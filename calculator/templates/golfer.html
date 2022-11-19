@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'follow.js' %}" defer></script>
+{% endblock %}
+
+{% block body %}
+{% if user.is_authenticated %}
+    {% if follow_button %}
+    <button>{{button_text}}</button>
+    {% endif %}
+{% endif %}
+<div id="golfer">{{golfer}}</div>
+    <div>{{golfer.handicap}}</div>
+
+{% for score in scores %}
+   <div>
+    {{score.differential}}
+    {{score.course}}
+   </div> 
+{% endfor %}
+{% endblock %}

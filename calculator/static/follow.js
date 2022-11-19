@@ -3,14 +3,14 @@
 
 const  button = document.querySelector('button');
 button.addEventListener('click', () => {
-    const personFollow = document.getElementById('person').textContent
-
+    const golferFollow = document.getElementById('golfer').textContent;
+    
     // Send POST request to modify database
     fetch('/follow', { 
         method: 'POST',
         body: JSON.stringify({
             type: button.textContent,
-            person: personFollow
+            golfer: golferFollow
         })
         })
         .then(response => response.json())
