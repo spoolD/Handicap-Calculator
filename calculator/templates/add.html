@@ -2,14 +2,62 @@
 {% load static %}
 
 {% block body %}
-<h1>Add New Score</h1>
+
 {% if error %}
-    {{error}}
+<div class="warning">{{error}}</div> 
 {% endif %}
-<form action="{% url 'add' %}" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit">
-</form>
+<div class="login-container">
+    <div class="background">
+        <div id="login-title">
+            Post Score
+        </div>
+        <div>   
+            <form action="{% url 'add' %}" method="post" class="score-form">
+                {% csrf_token %}
+                <div class="score-form-container">
+                    <div class="form-label">
+                        <label>{{form.course.label_tag}}</label>
+                    </div>
+                    <div class="form-input">{{form.course}}</div> 
+                </div>
+                <div class="score-form-container">
+                    <div class="form-label">
+                        <label>{{form.holes.label_tag}}</label>
+                    </div>
+                    <div class="form-input">{{form.holes}}</div>
+                </div>
+                <div class="score-form-container">
+                    <div class="form-label">
+                        <label>{{form.date.label_tag}}</label>
+                    </div>
+                    <div class="form-input">{{form.date}}</div>
+                </div>
+                <div class="score-form-container">
+                    <div class="form-label">
+                        <label>{{form.rating.label_tag}}</label>
+                    </div>
+                    <div class="form-input">{{form.rating}}</div>   
+                </div>
+                <div class="score-form-container">
+                    <div class="form-label">
+                        <label>{{form.slope.label_tag}}</label>
+                    </div>
+                    <div class="form-input">{{form.slope}}</div>
+                </div>
+                <div class="score-form-container">
+                    <div class="form-label">
+                        <label>{{form.score.label_tag}}</label>
+                    </div>
+                    <div class="form-input">{{form.score}}</div>
+                </div>
+
+                <div class="spacer20"></div>
+                <div class="centered-text">
+                    <input type="submit" value="Post" class="button">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
