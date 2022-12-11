@@ -42,9 +42,10 @@ def golfer_home(request, golfer):
     #get 20 most recent rounds and information
     golfer_obj = User.objects.get(username=golfer)
     scores = Score.objects.filter(golfer=golfer_obj, holes='18').order_by('-date')[:20]
-    
-    if request.user == golfer_obj.username:
-        follow_button = False
+ 
+    if str(request.user) == golfer:
+        print('here')
+        return HttpResponseRedirect(reverse('index'))
     else:
         follow_button = True
 

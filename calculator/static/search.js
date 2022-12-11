@@ -27,16 +27,10 @@ function add_golfer(golfer){
 
     const user_container = document.createElement('div');
     const user = document.createElement('a')
-    user.textContent = golfer.username;
+    user.textContent = golfer.username + ' (' + golfer.handicap + ')';
     user.href = 'find/' + golfer.username
     user_container.append(user)
     container.append(user_container);
-
-    const handicap = document.createElement('div');
-    handicap.innerText = golfer.handicap;
-    container.append(handicap);
-
-    
 
     document.querySelector('#results').append(container);
 }

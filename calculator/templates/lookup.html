@@ -6,19 +6,26 @@
 {% endblock %}
 
 {% block body %}
-<div>
-    <h1>My Followed Golfers</h1>
-    {% for golfer in following %}
-        <div>{{golfer}}: {{golfer.handicap}}</div>
+
+    <div class="background section">
+        <div class="title-text">Followed Golfers</div>
+        {% for golfer in following %}
+        <div class="sub-container">
+            <div class="centered-text">
+                <a href="/find/{{golfer}}">{{golfer}} ({{golfer.handicap}})</a>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-</div>
-
-<div>
-    <input id="golfer-search" type="text" placeholder="Golfer Name">
-</div>
-
-<div id="results">
-    <div>No Golfers Found</div>
-
+<div class="search-section">
+    <div class="title-text">
+        Search All Golfers
+    </div>
+    <div class="form-input">
+        <input class="centered-text" id="golfer-search" type="text" placeholder="Golfer Name">
+    </div> 
+    <div id="results" class="centered-text">
+        <div >No Golfers Found</div>
+    </div>
 </div>
 {% endblock %}
