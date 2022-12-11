@@ -3,22 +3,54 @@
 
 {% block body %}
 {% if user.is_authenticated %}
-    <div>{{user}} : {{user.handicap}}</div>
-    {% if nine_score %}
-    <div>===Awaiting Score to combine=== </div>
-    <div>
-        {{nine_score.differential}}
-        {{nine_score.course}}
+    
+    <div class="main-container"> 
+        <div class="sub-container">
+            <div class="title-text">{{user}}</div>
+            <div class="title-text">{{user.handicap}}</div>
+        
+        </div>
+        <button class="button"><a href="/add">Post Score</a></button>
+        <div class="spacer20"></div>
+        {% for score in scores %}
+        <div class="score-box">
+            <div class="sub-score-box">
+                <div>{{score.score}}</div>
+                <div>({{score.differential}})</div>
+            </div>
+            
+            <div class="course-info">
+                <div>{{score.course}}</div>
+                <div>{{score.rating}}/{{score.slope}}</div>
+            </div>
+            <div class="date">
+                {{score.date}}
+            </div>  
+        </div> 
+            {% endfor %}
+            
+            {% if nine_score %}
+            <div class="spacer20"></div>
+            <hr>
+            <div class="centered-text"> Awaiting Score to combine </div>
+            <div class="score-box">
+                <div class="sub-score-box">
+                    <div>{{nine_score.score}}</div>
+                    <div>({{nine_score.differential}})</div>
+                </div>
+                
+                <div class="course-info">
+                    <div>{{nine_score.course}}</div>
+                    <div>{{nine_score.rating}}/{{score.slope}}</div>
+                </div>
+                <div class="date">
+                    {{nine_score.date}}
+                </div>  
+            </div> 
+            {% endif %} 
     </div>
-    {% endif %}
-    {% for score in scores %}
-       <div>
-        {{score.differential}}
-        {{score.course}}
-       </div> 
-    {% endfor %}
-    <button><a href="/add">Post Score</a></button>
-{% else %}
+
+    {% else %}
     
 
     {% if message %}

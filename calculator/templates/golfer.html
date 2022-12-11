@@ -7,23 +7,33 @@
 
 {% block body %}
 {% if user.is_authenticated %}
-    {% if follow_button %}
-    <button>{{button_text}}</button>
-    {% endif %}
-{% endif %}
-<div id="golfer">{{golfer}}</div>
-    <div>{{golfer.handicap}}</div>
-{% if nine_score %}
-    <div>===Awaiting Score to combine=== </div>
-    <div>
-        {{nine_score.differential}}
-        {{nine_score.course}}
+
+   <div class="main-container"> 
+    <div class="sub-container">
+        <div class="title-text">{{golfer}}</div>
+        <div class="title-text">{{golfer.handicap}}</div>
+    
     </div>
+    {% if follow_button %}
+    <button class="button">{{button_text}}</button>
+    {% endif %}
+    <div class="spacer20"></div>
+    {% for score in scores %}
+    <div class="score-box">
+        <div class="sub-score-box">
+            <div>{{score.score}}</div>
+            <div>({{score.differential}})</div>
+        </div>
+        
+        <div class="course-info">
+            <div>{{score.course}}</div>
+            <div>{{score.rating}}/{{score.slope}}</div>
+        </div>
+        <div class="date">
+            {{score.date}}
+        </div>  
+    </div> 
+    {% endfor %}
+</div>
 {% endif %}
-{% for score in scores %}
-   <div>
-    {{score.differential}}
-    {{score.course}}
-   </div> 
-{% endfor %}
 {% endblock %}

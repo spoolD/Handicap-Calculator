@@ -2,6 +2,26 @@ html, body{
     background-color: #D3FFE9;
 }
 
+.main-container{
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.sub-container{
+    display: flex;
+    gap: 100px
+}
+
+.title-text{
+    font-family: 'Poppins', sans-serif;
+    font-size: 24pt;
+    margin-bottom: 10px;
+    color: #090909;
+}
+
 .warning{
     background-color: #FFB3B2;
     color: #A00003;
@@ -48,6 +68,42 @@ html, body{
     flex-direction: column;
 }
 
+.score-box{
+    display: flex;
+    background-color: #9bc4bc;
+    border-radius: 15px;
+    border: 3px solid #4b5043;
+    box-shadow: 2px -2px 10px #4b5043;
+    color:#090909;
+    font-family: 'Poppins', sans-serif;
+    justify-content: space-between;
+    width: 400px;
+    margin: 8px;
+    align-items: center;
+    flex: 0 0 auto;
+}
+.sub-score-box{
+    background-color: #8DDBE0;
+    border-radius: 15px 0px 0px 15px;
+    width: 20%;
+    text-align: center;
+    border-right: 3px solid #4b5043;
+    flex: 0 0 auto;
+}
+.sub-info-box{
+    display: flex;
+    justify-content: space-around;
+    flex:0 0 auto;
+}
+.course-info{
+    margin-left: 10px;
+}
+.date{
+    text-align: center;
+    margin-right: 10px;
+    margin-left:auto;
+}
+
 label{
     margin-bottom: 0rem;
 }
@@ -75,7 +131,6 @@ label{
     color: #090909;
     background-color: #8DDBE0;
     width: 100px;
-
 }
 
 #login-button{
@@ -94,6 +149,15 @@ label{
 
 .spacer20{
     height: 20px
+}
+
+hr {
+    border: 0;
+    /* clear:both; */
+    
+    width: 80%;               
+    background-color:#090909;
+    height: 3px;
 }
 
 a:link {

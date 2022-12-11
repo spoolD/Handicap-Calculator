@@ -42,12 +42,7 @@ def golfer_home(request, golfer):
     #get 20 most recent rounds and information
     golfer_obj = User.objects.get(username=golfer)
     scores = Score.objects.filter(golfer=golfer_obj, holes='18').order_by('-date')[:20]
-    #get 9 hole score waiting for additional score
-    try:
-        nine_score = Score.objects.get(golfer=user, holes='9')
-    except:
-        nine_score = None
-
+    
     if request.user == golfer_obj.username:
         follow_button = False
     else:
@@ -64,7 +59,7 @@ def golfer_home(request, golfer):
     else:
         button_text = 'Follow'
     
-    return render(request, 'golfer.html', {"scores": scores, "golfer": golfer_obj, "follow_button": follow_button, "button_text": button_text, "nine_score": nine_score})
+    return render(request, 'golfer.html', {"scores": scores, "golfer": golfer_obj, "follow_button": follow_button, "button_text": button_text})
 
 def login_view(request):
     if request.method == 'POST':
