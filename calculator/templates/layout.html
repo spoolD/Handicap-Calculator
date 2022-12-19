@@ -14,12 +14,8 @@
     </head>
     <body>
         <nav class="nav-container">
-            <a class="nav-link-text title-text" href="{% url 'index' %}"><img src="static/Handi-logo.png" width="150"></a>
-           
-        <!-- Obviously clean up the navbar and make it pretty and mobile responsive-->
+            <a class="nav-link-text title-text" href="{% url 'index' %}"><img src="{% static 'Handi-logo.png' %}" width="150"></a>
             <div class="links">
-              
-              
                 {% if user.is_authenticated %}
                 <div>
                   <a class="nav-link-text link-title" href="{% url 'logout' %}">Logout</a>
