@@ -24,11 +24,4 @@ class Score(models.Model):
     rating = models.FloatField()
     slope = models.IntegerField()
     differential = models.FloatField()
-    # If combined score
-    course_comb = models.CharField(max_length=64, blank=True, null=True, default=None)
-    date_comb = models.DateField(blank=True, null=True, default=None)
-    score_comb = models.IntegerField(blank=True, null=True, default=None)
-    rating_comb = models.FloatField(blank=True, null=True, default=None)
-    slope_comb = models.IntegerField(blank=True, null=True, default=None)
-    differential_first = models.FloatField(blank=True, null=True, default=None)
-    differential_second = models.FloatField(blank=True, null=True, default=None)
+   

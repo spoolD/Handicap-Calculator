@@ -125,18 +125,14 @@ def add_score(request):
             except:
                 score_nine = None
 
-            if holes == '9' and score_nine:
-                print('here')  
+            if holes == '9' and score_nine: 
                 score_nine.holes = '18'
-                score_nine.date_comb = form.cleaned_data['date']
-                score_nine.score_comb = form.cleaned_data['score']
-                score_nine.rating_comb = form.cleaned_data['rating']
-                score_nine.slope_comb = form.cleaned_data['slope']
-                score_nine.differential_first = differential
+                score_nine.date = form.cleaned_data['date']
+                score_nine.score = score_nine.score + form.cleaned_data['score']
+                score_nine.rating = score_nine.rating + form.cleaned_data['rating']
+                score_nine.slope = (score_nine.slope + form.cleaned_data['slope'])/2
                 score_nine.differential = decimal.Decimal(score_nine.differential) + differential
-                score_nine.differential_second = differential
-                score_nine.course_comb = form.cleaned_data['course']
-                score_nine.date_comb = form.cleaned_data['date']
+                score_nine.course = score_nine.course + '/' + form.cleaned_data['course']
 
                 score_nine.save()
             else:
